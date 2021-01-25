@@ -8,12 +8,14 @@ use crate::response::AmplitudeResponse;
 pub struct Amp {
     api_key: String,
     client: Client,
+    url: String,
 }
 
 
 impl Amp {
     const URL_SINGLE: &'static str = "https://api2.amplitude.com/2/httpapi";
     const URL_BATCH: &'static str = "https://api2.amplitude.com/batch";
+    const DEFAULT_SERVER_ERROR: &'static str = r#"{"error": "Some kind of server error"}"#;
 
     pub fn from_env() -> Self {
         let client = reqwest::Client::new();
@@ -24,6 +26,7 @@ impl Amp {
                     |_| panic!("Cannot get the {} env variable", amplitude_api_key)
                 ),
             client,
+            url: Self::URL_SINGLE.into(),
         }
     }
 
@@ -35,22 +38,34 @@ impl Amp {
         Self {
             api_key,
             client,
+            url: Self::URL_SINGLE.into(),
         }
     }
 
-    pub async fn send(&self, event: &Event) -> Result<AmplitudeResponse, reqwest::Error> {
-        let default_server_error = String::from(r#"{"error": "Some kind of server error"}"#);
+    /// Sets HTTP API V2 (Single) url on `Amp`
+    pub fn single(&mut self) -> &mut Self {
+        self.url = Self::URL_SINGLE.into();
+        self
+    }
+
+    /// Sets batch url on `Amp`
+    pub fn batch(&mut self) -> &mut Self {
+        self.url = Self::URL_BATCH.into();
+        self
+    }
+
+    pub async fn send(&self, event: &Event) -> Result<AmplitudeResponse, AmplitudeError> {
         let upload_body = UploadBody {
             api_key: self.api_key.clone(),
             events: vec![event.clone()]
         };
         let response = self.client
-            .post(Self::URL_SINGLE)
+            .post(&self.url)
             .json(&upload_body)
             .send()
             .await?;
         let status = response.status();
-        let text = response.text().await.unwrap_or(default_server_error);
+        let text = response.text().await.unwrap_or(Self::DEFAULT_SERVER_ERROR.into());
         let amp_response = match status {
             StatusCode::OK => {
                 Self::add_tag("Ok", text)
@@ -77,7 +92,6 @@ impl Amp {
                 Self::add_tag("Ok", text)
             }
         };
-        eprintln!("amp_response = {:#?}", amp_response);
         Ok(serde_json::from_str(&amp_response).unwrap())
     }
 

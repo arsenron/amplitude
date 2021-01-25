@@ -4,8 +4,8 @@ use super::*;
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub(crate) struct UploadBody {
-    pub(crate) api_key: String,
-    pub(crate) events: Vec<Event>,
+    pub api_key: String,
+    pub events: Vec<Event>,
 }
 
 
@@ -57,11 +57,13 @@ pub struct Event {
 
 
 impl Event {
-    pub fn new<S>(user_id: Option<S>, device_id: Option<S>, event_type: S) -> Result<Self, String>
+    pub fn new<S>(user_id: Option<S>, device_id: Option<S>, event_type: S) -> Result<Self, AmplitudeError>
         where S: Into<String>
     {
         if user_id.is_none() && device_id.is_none() {
-            return Err("ds".to_string())
+            return Err(
+                AmplitudeError::Initialization("user_id or device_id must be provided".to_string())
+            )
         }
         let user_id = user_id.map(|val| val.into());
         let device_id = device_id.map(|val| val.into());

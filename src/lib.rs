@@ -15,3 +15,19 @@ pub mod errors;
 pub(crate) use prelude::*;
 pub use amp::Amp;
 pub use entities::Event;
+
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum AmplitudeError {
+    #[error("initialization error")]
+    Initialization(String),
+
+    #[error("A network error: {0}")]
+    NetworkError(#[from] reqwest::Error),
+
+    #[error("unknown error")]
+    Unknown,
+}
+
+
