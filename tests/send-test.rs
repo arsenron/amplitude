@@ -11,7 +11,7 @@ async fn send() {
     event
         .country("BY")
         .android_id("ewq4tegf");
-    let response = amp.send(&event).await.unwrap();
+    let response = amp.send(vec![&event]).await.unwrap();
     eprintln!("response = {:#?}", response);
     // assert_eq!(1, 2);
 }

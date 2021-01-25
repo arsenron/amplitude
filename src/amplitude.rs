@@ -17,16 +17,19 @@ impl Amp {
     const URL_BATCH: &'static str = "https://api2.amplitude.com/batch";
     const DEFAULT_SERVER_ERROR: &'static str = r#"{"error": "Some kind of server error"}"#;
 
-    pub fn from_env() -> Self {
+    pub fn from_env() -> Result<Self, AmplitudeError> {
         let client = reqwest::Client::new();
         let amplitude_api_key = "AMPLITUDE_API_KEY";
-        Self {
-            api_key: std::env::var(amplitude_api_key)
-                .unwrap_or_else(
-                    |_| panic!("Cannot get the {} env variable", amplitude_api_key)
-                ),
-            client,
-            url: Self::URL_SINGLE.into(),
+        let api_key = std::env::var(amplitude_api_key);
+        if let Ok(api_key) = api_key {
+            Ok(Self {
+                api_key,
+                client,
+                url: Self::URL_SINGLE.into(),
+            })
+        } else {
+            let err = "No AMPLITUDE_API_KEY environment variable was found".to_string();
+            Err(AmplitudeError::InitializationError(err))
         }
     }
 
@@ -54,10 +57,10 @@ impl Amp {
         self
     }
 
-    pub async fn send(&self, event: &Event) -> Result<AmplitudeResponse, AmplitudeError> {
+    pub async fn send(&self, events: Vec<&Event>) -> Result<AmplitudeResponse, AmplitudeError> {
         let upload_body = UploadBody {
             api_key: self.api_key.clone(),
-            events: vec![event.clone()]
+            events: events.into_iter().cloned().collect(),
         };
         let response = self.client
             .post(&self.url)
