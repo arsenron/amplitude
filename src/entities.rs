@@ -62,7 +62,7 @@ impl Event {
     {
         if user_id.is_none() && device_id.is_none() {
             return Err(
-                AmplitudeError::Initialization("user_id or device_id must be provided".to_string())
+                AmplitudeError::InitializationError("user_id or device_id must be provided".to_string())
             )
         }
         let user_id = user_id.map(|val| val.into());

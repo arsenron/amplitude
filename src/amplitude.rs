@@ -92,10 +92,11 @@ impl Amp {
                 Self::add_tag("Ok", text)
             }
         };
-        Ok(serde_json::from_str(&amp_response).unwrap())
+        Ok(serde_json::from_str(&amp_response)?)
     }
 
     /// Adds enum variant tag so serde can distinguish beetween enum variants
+    ///
     /// # Examples
     /// ```
     /// let json = r#"{"field": "value"}"#;
