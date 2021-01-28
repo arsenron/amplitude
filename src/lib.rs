@@ -1,13 +1,15 @@
-pub(crate) mod prelude;
-pub mod amplitude;
-pub mod entities;
-pub mod response;
+use thiserror::Error;
 
-pub(crate) use prelude::*;
 pub use amplitude::Amp;
 pub use entities::Event;
+pub(crate) use prelude::*;
 
-use thiserror::Error;
+pub mod amplitude;
+pub mod entities;
+pub(crate) mod prelude;
+pub mod response;
+
+type SerdeMap = serde_json::Map<String, serde_json::Value>;
 
 #[derive(Error, Debug)]
 pub enum AmplitudeError {
@@ -23,5 +25,3 @@ pub enum AmplitudeError {
     #[error("unknown error")]
     UnknownError,
 }
-
-

@@ -1,8 +1,5 @@
 use super::*;
 
-
-type SerdeMap = serde_json::Map<String, serde_json::Value>;
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum AmplitudeResponse {
     Ok(Ok),
@@ -13,7 +10,8 @@ pub enum AmplitudeResponse {
     ServiceUnavailable(ServiceUnavailable),
 }
 
-
+///
+/// [The official docs](https://developers.amplitude.com/docs/http-api-v2#200-response-successsummary)
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
@@ -24,7 +22,7 @@ pub struct Ok {
     server_upload_time: Option<u64>,
 }
 
-
+/// [The official docs](https://developers.amplitude.com/docs/http-api-v2#400-response-invalidrequesterror)
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
@@ -37,7 +35,6 @@ pub struct BadRequest {
     events_with_invalid_id_lengths: Option<SerdeMap>,
 }
 
-
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
@@ -45,7 +42,6 @@ pub struct PayloadTooLarge {
     code: Option<u16>,
     error: Option<String>,
 }
-
 
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -59,18 +55,16 @@ pub struct TooManyRequests {
     throttled_events: Option<Vec<u32>>,
 }
 
-
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct ServerError {
-    value: Option<HashMap<String, serde_json::Value>>,  // any value, as it is unknown
+    value: Option<HashMap<String, serde_json::Value>>, // any value, as it is unknown
 }
-
 
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct ServiceUnavailable {
-    value: Option<HashMap<String, serde_json::Value>>,  // any value, as it is unknown
+    value: Option<HashMap<String, serde_json::Value>>, // any value, as it is unknown
 }
