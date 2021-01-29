@@ -21,7 +21,7 @@ pub(crate) struct ApiOptions {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct Event {
-    pub event_type: String,
+    pub event_type: Option<String>,
     pub user_id: Option<String>,
     pub device_id: Option<String>,
     pub time: Option<u64>,
@@ -64,26 +64,8 @@ pub struct Event {
 }
 
 impl Event {
-    pub fn new<S>(
-        user_id: Option<S>,
-        device_id: Option<S>,
-        event_type: S,
-    ) -> Result<Self, AmplitudeError>
-    where
-        S: Into<String>,
-    {
-        if user_id.is_none() && device_id.is_none() {
-            return Err(AmplitudeError::InitializationError(
-                "user_id or device_id must be provided".to_string(),
-            ));
-        }
-        let user_id = user_id.map(|val| val.into());
-        let device_id = device_id.map(|val| val.into());
-        let mut event = Event::default();
-        event.device_id = device_id;
-        event.user_id = user_id;
-        event.event_type = event_type.into();
-        Ok(event)
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn from_json(val: serde_json::Value) -> Result<Self, AmplitudeError> {
@@ -120,7 +102,7 @@ impl Event {
     where
         S: Into<String>,
     {
-        self.event_type = val.into();
+        self.event_type = Some(val.into());
         self
     }
 

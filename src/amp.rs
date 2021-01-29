@@ -7,7 +7,7 @@ use super::*;
 
 pub struct Amp {
     api_key: String,
-    client: Client,
+    pub client: Client,
     url: String,
     options: Option<ApiOptions>,
 }
@@ -16,11 +16,11 @@ impl Amp {
     const URL_SINGLE: &'static str = "https://api2.amplitude.com/2/httpapi";
     const URL_BATCH: &'static str = "https://api2.amplitude.com/batch";
     const DEFAULT_SERVER_ERROR: &'static str = r#"{"error": "Some kind of server error"}"#;
+    const ENV: &'static str = "AMPLITUDE_API_KEY";
 
     pub fn from_env() -> Result<Self, AmplitudeError> {
         let client = reqwest::Client::new();
-        let amplitude_api_key = "AMPLITUDE_API_KEY";
-        let api_key = std::env::var(amplitude_api_key);
+        let api_key = std::env::var(Self::ENV);
         if let Ok(api_key) = api_key {
             Ok(Self {
                 api_key,
