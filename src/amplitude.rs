@@ -104,7 +104,7 @@ impl Amp {
         Ok(serde_json::from_str(&amp_response)?)
     }
 
-    /// Adds enum variant tag so serde can distinguish beetween enum variants
+    /// Adds enum variant's tag so serde can distinguish beetween enum variants
     /// when deserializing
     ///
     /// # Examples

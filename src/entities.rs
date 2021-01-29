@@ -78,43 +78,11 @@ impl Event {
         }
         let user_id = user_id.map(|val| val.into());
         let device_id = device_id.map(|val| val.into());
-        Ok(Self {
-            event_type: event_type.into(),
-            user_id,
-            device_id,
-            time: None,
-            event_properties: None,
-            user_properties: None,
-            groups: None,
-            app_version: None,
-            platform: None,
-            os_name: None,
-            os_version: None,
-            device_brand: None,
-            device_manufacturer: None,
-            device_model: None,
-            carrier: None,
-            country: None,
-            region: None,
-            city: None,
-            dma: None,
-            language: None,
-            price: None,
-            quantity: None,
-            revenue: None,
-            product_id: None,
-            revenue_type: None,
-            location_lat: None,
-            location_lng: None,
-            ip: None,
-            idfa: None,
-            idfv: None,
-            adid: None,
-            android_id: None,
-            event_id: None,
-            session_id: None,
-            insert_id: None,
-        })
+        let mut event = Event::default();
+        event.device_id = device_id;
+        event.user_id = user_id;
+        event.event_type = event_type.into();
+        Ok(event)
     }
 
     pub fn from_json(val: serde_json::Value) -> Result<Self, AmplitudeError> {
