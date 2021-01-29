@@ -116,6 +116,22 @@ impl Event {
             insert_id: None,
         })
     }
+
+    pub fn from_json(val: serde_json::Value) -> Result<Self, AmplitudeError> {
+        use serde_json::Value::Null;
+        let user_id = &val["user_id"];
+        let device_id = &val["device_id"];
+        if user_id == &Null && device_id == &Null {
+            return Err(
+                AmplitudeError::InitializationError(
+                    "user_id or device_id must be provided".to_string()
+                )
+            )
+        }
+        Ok(
+            serde_json::from_value(val)?
+        )
+    }
 }
 
 impl Event {
