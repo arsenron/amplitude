@@ -10,7 +10,6 @@ pub enum AmplitudeResponse {
     ServiceUnavailable(ServiceUnavailable),
 }
 
-///
 /// [The official docs](https://developers.amplitude.com/docs/http-api-v2#200-response-successsummary)
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]

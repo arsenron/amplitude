@@ -1,29 +1,27 @@
-use amplitude::amplitude::Amp;
+use amplitude::amp::Amp;
 use amplitude::entities::Event;
 
 #[tokio::test]
 async fn send() {
-    let key = "0088b844e9444ba503af88d0b5911deb";
-    let mut amp = Amp::new(key);
-    amp
-        .single()
-        .set_min_id_length(4);
+    let mut amp = Amp::from_env().unwrap();
+    amp.single().set_min_id_length(4);
     let mut event = Event::new(Some("6543"), None, "test").unwrap();
     event
         .country("BY")
         .android_id("ewq4tegf")
-        .ip("rew");
-    let response = amp
-        .send(vec![&event])
-        .await
-        .unwrap();
+        .time(chrono::Utc::now())
+        .ip4(Some(std::net::Ipv4Addr::new(127, 0, 0, 1)));
+    eprintln!("event = {:#?}", event);
+    event.ip6(None);
+    eprintln!("event = {:#?}", event);
+    let response = amp.send(vec![&event]).await.unwrap();
     eprintln!("response = {:#?}", response);
 }
 
 #[tokio::test]
 async fn map() {
+    use serde::Serialize;
     use serde_json::json;
-    use serde::{Serialize};
 
     #[derive(Serialize)]
     struct UserProperties {
@@ -53,21 +51,17 @@ async fn map() {
     eprintln!("response = {:#?}", response);
 }
 
-
 #[tokio::test]
 async fn event_json() {
+    use serde::Serialize;
     use serde_json::json;
-    use serde::{Serialize};
-    let key = "0088b844e9444ba503af88d0b5911deb";
-    let mut amp = Amp::new(key);
-    // let mut amp = Amp::from_env().unwrap();
     let event = Event::from_json(json!(
         {
             "user_id": "43546757",
             "event_type": "json",
             "android_id": "3gfhtey534-647"
         }
-    )).unwrap();
+    ))
+    .unwrap();
     eprintln!("event = {:#?}", event);
-
 }

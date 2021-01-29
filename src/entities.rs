@@ -1,5 +1,6 @@
 use super::*;
 use serde_json::json;
+use std::net::{Ipv4Addr, Ipv6Addr};
 
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -90,15 +91,11 @@ impl Event {
         let user_id = &val["user_id"];
         let device_id = &val["device_id"];
         if user_id == &Null && device_id == &Null {
-            return Err(
-                AmplitudeError::InitializationError(
-                    "user_id or device_id must be provided".to_string()
-                )
-            )
+            return Err(AmplitudeError::InitializationError(
+                "user_id or device_id must be provided".to_string(),
+            ));
         }
-        Ok(
-            serde_json::from_value(val)?
-        )
+        Ok(serde_json::from_value(val)?)
     }
 }
 
@@ -127,30 +124,30 @@ impl Event {
         self
     }
 
-    pub fn time(&mut self, val: u64) -> &mut Self {
-        self.time = Some(val);
+    pub fn time(&mut self, val: chrono::DateTime<chrono::Utc>) -> &mut Self {
+        self.time = Some(val.timestamp_millis() as u64);
         self
     }
 
     pub fn event_properties<T>(&mut self, val: T) -> &mut Self
-        where
-            T: Serialize
+    where
+        T: Serialize,
     {
         self.event_properties = Some(json!(val));
         self
     }
 
     pub fn user_properties<T>(&mut self, val: T) -> &mut Self
-        where
-            T: Serialize
+    where
+        T: Serialize,
     {
         self.user_properties = Some(json!(val));
         self
     }
 
     pub fn groups<T>(&mut self, val: T) -> &mut Self
-        where
-            T: Serialize
+    where
+        T: Serialize,
     {
         self.groups = Some(json!(val));
         self
@@ -301,11 +298,21 @@ impl Event {
         self
     }
 
-    pub fn ip<S>(&mut self, val: S) -> &mut Self
-    where
-        S: Into<String>,
-    {
-        self.ip = Some(val.into());
+    pub fn ip4(&mut self, val: Option<Ipv4Addr>) -> &mut Self {
+        let ip = match val {
+            None => String::from("$remote"),
+            Some(v) => v.to_string(),
+        };
+        self.ip = Some(ip);
+        self
+    }
+
+    pub fn ip6(&mut self, val: Option<Ipv6Addr>) -> &mut Self {
+        let ip = match val {
+            None => String::from("$remote"),
+            Some(v) => v.to_string(),
+        };
+        self.ip = Some(ip);
         self
     }
 

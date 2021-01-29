@@ -1,13 +1,12 @@
-use thiserror::Error;
-
-pub use amplitude::Amp;
-pub use entities::Event;
-pub(crate) use prelude::*;
-
-pub mod amplitude;
+pub mod amp;
 pub mod entities;
 pub(crate) mod prelude;
 pub mod response;
+
+pub use amp::Amp;
+pub use entities::Event;
+use prelude::*;
+use thiserror::Error;
 
 type SerdeMap = serde_json::Map<String, serde_json::Value>;
 

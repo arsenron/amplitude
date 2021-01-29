@@ -106,13 +106,6 @@ impl Amp {
 
     /// Adds enum variant's tag so serde can distinguish beetween enum variants
     /// when deserializing
-    ///
-    /// # Examples
-    /// ```
-    /// let json = r#"{"field": "value"}"#;
-    /// let tagged_json = r#"{"EnumVariant": {"field": "value"}"#;
-    /// assert_eq!(add_tag("EnumVariant", json), tagged_json);
-    /// ```
     fn add_tag(tag: &str, text: String) -> String {
         format!(r#"{{"{tag}": {text}}}"#, tag = tag, text = text)
     }
