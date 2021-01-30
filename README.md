@@ -10,8 +10,8 @@ use amplitude::{Amp, Event};
 use serde_json::json;
 
 #[tokio::main]
-async fn main() {
-    let amp = Amp::from_env().unwrap(); // api key as env variable must be provided
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let amp = Amp::from_env()?; // api key as env variable must be provided
     let mut event1 = Event::new();
     event1
     	.user_id("some user id")
@@ -26,8 +26,10 @@ async fn main() {
             "event_type": "lay on the beach",
             "android_id": "3gfhtey534-647"
         }
-    )).unwrap();
-    let response = amp.send(vec![&event1, &event2]).unwrap();
+    ))?;
+    let response = amp.send(vec![&event1, &event2])?;
+    
+    Ok(())
 }
 ```
 
@@ -40,8 +42,8 @@ use amplitude::{Amp, Event};
 use serde_json::json;
 
 #[tokio::main]
-async fn main() {
-    let mut amp = Amp::from_env().unwrap(); // api key as env variable must be provided
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut amp = Amp::from_env()?; // api key as env variable must be provided
     amp
     	.batch() // set batch url
     	.set_min_id_length(4); 
@@ -72,7 +74,7 @@ async fn main() {
             }
         ]
     }));
-    let response = amp.send(vec![&event]).await.unwrap();
+    let response = amp.send(vec![&event]).await?;
 }
 ```
 

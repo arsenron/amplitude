@@ -3,8 +3,8 @@ use serde::Serialize;
 use serde_json::json;
 
 #[tokio::test]
-async fn send() {
-    let mut amp = Amp::from_env().unwrap();
+async fn send() -> Result<(), Box<dyn std::error::Error>> {
+    let mut amp = Amp::from_env()?;
     amp.batch().set_min_id_length(4);
     let mut event = Event::new();
     event
@@ -15,8 +15,9 @@ async fn send() {
         .time(chrono::Utc::now())
         .ip4(Some(std::net::Ipv4Addr::new(127, 0, 0, 1)));
     eprintln!("event = {:#?}", event);
-    let response = amp.send(vec![&event]).await.unwrap();
+    let response = amp.send(vec![&event]).await?;
     eprintln!("response = {:#?}", response);
+    Ok(())
 }
 
 #[tokio::test]
