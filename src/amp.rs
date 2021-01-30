@@ -5,6 +5,7 @@ use crate::response::AmplitudeResponse;
 
 use super::*;
 
+#[derive(Clone, Debug)]
 pub struct Amp {
     api_key: String,
     pub client: Client,
