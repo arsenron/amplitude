@@ -27,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "android_id": "3gfhtey534-647"
         }
     ))?;
-    let response = amp.send(vec![&event1, &event2])?;
+    let response = amp.send(vec![event1, event2])?;
     
     Ok(())
 }
@@ -74,7 +74,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         ]
     }));
-    let response = amp.send(vec![&event]).await?;
+    let response = amp.send(vec![event]).await?;
 }
 ```
 

@@ -15,7 +15,7 @@ async fn send() -> Result<(), Box<dyn std::error::Error>> {
         .time(chrono::Utc::now())
         .ip4(Some(std::net::Ipv4Addr::new(127, 0, 0, 1)));
     eprintln!("event = {:#?}", event);
-    let response = amp.send(vec![&event]).await?;
+    let response = amp.send(vec![event]).await?;
     eprintln!("response = {:#?}", response);
     Ok(())
 }
@@ -51,7 +51,7 @@ async fn map() {
         ]
     }));
     eprintln!("event = {:#?}", event);
-    let response = amp.send(vec![&event]).await.unwrap();
+    let response = amp.send(vec![event]).await.unwrap();
     eprintln!("response = {:#?}", response);
 }
 
@@ -71,7 +71,7 @@ async fn event_json() {
 #[tokio::test]
 async fn raw() -> Result<(), Box<dyn std::error::Error>> {
     let mut amp = Amp::from_env()?;
-    let response = amp.send_one(&json!(
+    let response = amp.send_one(json!(
         {
             "user_id": "46688",
             "event_type": "ollahcoyg"
