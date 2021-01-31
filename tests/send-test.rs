@@ -68,13 +68,16 @@ async fn event_json() {
     eprintln!("event = {:#?}", event);
 }
 
-// #[tokio::test]
-// async fn raw() {
-//     let mut amp = Amp::from_env()?;
-//     amp.send_one(json!({
-//         {
-//             "user_id": "46688",
-//             "event_type": "ollahcoyg"
-//         }
-//     })).await?;
-// }
+#[tokio::test]
+async fn raw() -> Result<(), Box<dyn std::error::Error>> {
+    let mut amp = Amp::from_env()?;
+    let response = amp.send_one(&json!(
+        {
+            "user_id": "46688",
+            "event_type": "ollahcoyg"
+        }
+    )).await?;
+    eprintln!("response = {:#?}", response);
+
+    Ok(())
+}

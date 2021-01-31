@@ -8,7 +8,7 @@ use super::*;
 #[derive(Clone, Debug)]
 pub struct Amp {
     api_key: String,
-    pub client: Client,
+    client: Client,
     url: String,
     options: Option<ApiOptions>,
 }
@@ -49,6 +49,12 @@ impl Amp {
         }
     }
 
+    /// Sets new [client](https://docs.rs/reqwest/0.10.2/reqwest/struct.Client.html)
+    pub fn set_client(&mut self, client: reqwest::Client) -> &mut Self {
+        self.client = client;
+        self
+    }
+
     /// Sets HTTP API V2 (Single) url to send request to
     pub fn single(&mut self) -> &mut Self {
         self.url = Self::URL_SINGLE.into();
@@ -70,13 +76,30 @@ impl Amp {
         self
     }
 
+    /// Sends bunch of events to the amplitude servers
     pub async fn send(&self, events: Vec<&Event>) -> Result<AmplitudeResponse, AmplitudeError> {
         let upload_body = UploadBody {
             api_key: self.api_key.clone(),
             events: events.into_iter().cloned().collect(),
             options: self.options.clone(),
         };
-        // eprintln!("ser = {:#?}", serde_json::to_string(&upload_body)?);
+        self._send(upload_body).await
+    }
+
+    /// Sends an event to the amplitude servers
+    pub async fn send_one(&self, event: &serde_json::Value) -> Result<AmplitudeResponse, AmplitudeError> {
+        let events = vec![
+            Event::from_json(event.clone())?
+        ];
+        let upload_body = UploadBody {
+            api_key: self.api_key.clone(),
+            events,
+            options: self.options.clone(),
+        };
+        self._send(upload_body).await
+    }
+
+    async fn _send(&self, upload_body: UploadBody) -> Result<AmplitudeResponse, AmplitudeError> {
         let response = self
             .client
             .post(&self.url)
