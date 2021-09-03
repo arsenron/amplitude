@@ -87,16 +87,8 @@ impl Amp {
     }
 
     /// Sends an event to the amplitude servers
-    pub async fn send_one(&self, event: serde_json::Value) -> Result<AmplitudeResponse, AmplitudeError> {
-        let events = vec![
-            Event::from_json(event)?
-        ];
-        let upload_body = UploadBody {
-            api_key: self.api_key.clone(),
-            events,
-            options: self.options.clone(),
-        };
-        self._send(upload_body).await
+    pub async fn send_one(&self, event: Event) -> Result<AmplitudeResponse, AmplitudeError> {
+        self.send(vec![event]).await
     }
 
     async fn _send(&self, upload_body: UploadBody) -> Result<AmplitudeResponse, AmplitudeError> {

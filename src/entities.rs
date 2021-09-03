@@ -93,9 +93,9 @@ impl Event {
     /// Required unless device_id is present.
     pub fn user_id<S>(&mut self, val: S) -> &mut Self
     where
-        S: Into<String>,
+        S: ToString,
     {
-        self.user_id = Some(val.into());
+        self.user_id = Some(val.to_string());
         self
     }
 
